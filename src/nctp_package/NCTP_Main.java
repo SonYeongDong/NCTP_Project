@@ -58,7 +58,17 @@ public class NCTP_Main {
 
     static NCTP_Problem[] loadProblems() {
         NCTP_Parser parser = new NCTP_Parser("Asset/Problem_Set.txt");
-        return parser.parseProblems();
+        NCTP_Problem[] problems = parser.parseProblems();
+
+        Random rand = new Random();
+        for (int i = problems.length - 1; i > 0; i--) {
+            int j = rand.nextInt(i + 1);
+            NCTP_Problem temp = problems[i];
+            problems[i] = problems[j];
+            problems[j] = temp;
+        }
+
+        return problems;
     }
 
     static int runTest(NCTP_Problem[] problems, Scanner scanner, int[] userAnswers) {

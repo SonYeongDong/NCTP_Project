@@ -6,6 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="a71e23fe-33d6-488a-bbef-86fc76e57f94" name="변경" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/production/NCTP_Project/nctp_package/NCTP_Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/production/NCTP_Project/nctp_package/NCTP_Main.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/nctp_package/NCTP_Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/nctp_package/NCTP_Main.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -98,6 +99,7 @@
       <workItem from="1749090075506" duration="236000" />
       <workItem from="1749097738720" duration="336000" />
       <workItem from="1749098094070" duration="3707000" />
+      <workItem from="1749172248910" duration="724000" />
     </task>
     <servers />
   </component>
