@@ -3,6 +3,8 @@ package nctp_package;
 import java.util.*;
 
 public class NCTP_Main {
+
+    // ANSI 색상 코드 정의 (콘솔 출력 색상용)
     public static final String ANSI_RESET = "\u001B[0m";
     public static final String ANSI_RED = "\u001B[31m";
     public static final String ANSI_GREEN = "\u001B[32m";
@@ -11,27 +13,31 @@ public class NCTP_Main {
     public static final String ANSI_CYAN = "\u001B[36m";
     public static final String ANSI_PURPLE = "\u001B[35m";
 
+    // 프로그램 시작 지점
     public static void main(String[] args) {
         try (Scanner scanner = new Scanner(System.in)) {
-            printTitle();
-            String userName = greetUser(scanner);
-            NCTP_Problem[] problems = loadProblems();
+            printTitle(); // 타이틀 출력
+            String userName = greetUser(scanner); // 사용자 이름 입력 및 입사 축하 메시지
+            NCTP_Problem[] problems = loadProblems(); // 문제 불러오기 및 랜덤 셔플
 
             if (problems.length == 0) {
-                System.out.println(ANSI_RED + "⚠️ 문제가 존재하지 않거나 파싱에 실패했습니다." + ANSI_RESET);
+                System.out.println(ANSI_RED + "⚠️ 문제가 존재하지 않거나 파싱에 실패했습니다." + ANSI_RESET); // 문제 에러 처리
                 return;
             }
 
-            int[] userAnswers = new int[problems.length];
-            int correctCount = runTest(problems, scanner, userAnswers);
+            int[] userAnswers = new int[problems.length]; // 사용자 정답 저장용 배열
 
-            printResult(userName, correctCount, problems.length);
-            if (correctCount < problems.length) {
-                showFeedbackIfRequested(problems, userAnswers, scanner);
+            int correctCount = runTest(problems, scanner, userAnswers); // 퀴즈 실행 및 정답 수 반환
+
+            printResult(userName, correctCount, problems.length); // 결과 출력
+
+            if (correctCount < problems.length) { // 모든 문제를 맞춘 경우 해설 생략
+                showFeedbackIfRequested(problems, userAnswers, scanner); // 해설 출력
             }
         }
     }
 
+    // 게임 타이틀 및 안내 메시지 출력
     static void printTitle() {
         System.out.println(ANSI_BLUE +
                 "  _   _  ____ _____ ____     ___  _   _ ___ _____\n"
@@ -46,6 +52,7 @@ public class NCTP_Main {
         System.out.println("🏢===========================================🏢" + ANSI_RESET);
     }
 
+    // 사용자 이름을 입력받고 안내 메시지 출력
     static String greetUser(Scanner scanner) {
         System.out.print("🙋 이름을 입력해주세요: ");
         String userName = scanner.nextLine().trim();
@@ -54,14 +61,16 @@ public class NCTP_Main {
         System.out.println("❌ 문제를 틀릴 때마다 정규직 전환 확률이 줄어듭니다.");
         System.out.println("🧪 모든 평가를 통과하면 정규직 전환에 성공합니다.");
         System.out.println("👉 엔터 키를 누르면 테스트를 시작합니다...");
-        scanner.nextLine();
+        scanner.nextLine(); // 사용자 입력 대기
         return userName;
     }
 
+    // 문제 파일을 읽고 랜덤하게 섞어서 반환
     static NCTP_Problem[] loadProblems() {
         NCTP_Parser parser = new NCTP_Parser("Asset/Problem_Set.txt");
         NCTP_Problem[] problems = parser.parseProblems();
 
+        // Fisher-Yates 알고리즘을 이용한 셔플
         Random rand = new Random();
         for (int i = problems.length - 1; i > 0; i--) {
             int j = rand.nextInt(i + 1);
@@ -73,11 +82,14 @@ public class NCTP_Main {
         return problems;
     }
 
+    // 문제 출제 및 정답 수 반환
     static int runTest(NCTP_Problem[] problems, Scanner scanner, int[] userAnswers) {
         int correctCount = 0;
 
         for (int i = 0; i < problems.length; i++) {
             NCTP_Problem p = problems[i];
+
+            // 문제 및 보기 출력
             System.out.println("📌 문제 " + (i + 1) + " / " + problems.length);
             System.out.println("❓ " + p.getQuestion());
 
@@ -86,6 +98,7 @@ public class NCTP_Main {
                 System.out.println((j + 1) + ". " + choices[j]);
             }
 
+            // 사용자 정답 입력 및 입력값 검사
             int userAnswer = -1;
             while (true) {
                 System.out.print("\n🔢 정답 입력 (1~4): ");
@@ -98,21 +111,18 @@ public class NCTP_Main {
                 }
             }
 
+            // 정답 저장 및 채점
             userAnswers[i] = userAnswer;
             if (userAnswer == p.getAnswer()) correctCount++;
 
+            // 진행률 바 출력
             int progress = (int) (((i + 1) * 100.0) / problems.length);
             int barLength = 20;
             int filledLength = progress * barLength / 100;
             StringBuilder barBuilder = new StringBuilder();
             barBuilder.append("[");
-
             for (int j = 0; j < barLength; j++) {
-                if (j < filledLength) {
-                    barBuilder.append("#");
-                } else {
-                    barBuilder.append(" ");
-                }
+                barBuilder.append(j < filledLength ? "#" : " ");
             }
             barBuilder.append("]");
 
@@ -123,6 +133,7 @@ public class NCTP_Main {
         return correctCount;
     }
 
+    // 최종 결과 출력 및 평가 문구 출력
     static void printResult(String userName, int correctCount, int totalQuestions) {
         int score = (int) ((correctCount * 100.0) / totalQuestions);
 
@@ -131,6 +142,7 @@ public class NCTP_Main {
         System.out.println("📈 정답 수: " + correctCount + " / " + totalQuestions);
         System.out.println("📊 정답률: " + score + "%");
 
+        // 점수에 따른 문구
         if (score == 100) {
             System.out.println(ANSI_GREEN + "🏆 만점입니다. 이 정도면 바로 정규직 확정입니다. 축하드립니다!" + ANSI_RESET);
         } else if (score >= 70) {
@@ -142,6 +154,7 @@ public class NCTP_Main {
         }
     }
 
+    // 사용자 요청 시 오답 해설을 출력
     static void showFeedbackIfRequested(NCTP_Problem[] problems, int[] userAnswers, Scanner scanner) {
         System.out.println("\n📌 정답과 해설을 보고 싶다면 'Y'를 입력하세요. (그 외 입력 시 종료): ");
         String input = scanner.nextLine().trim().toUpperCase();
