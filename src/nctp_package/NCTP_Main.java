@@ -26,7 +26,9 @@ public class NCTP_Main {
             int correctCount = runTest(problems, scanner, userAnswers);
 
             printResult(userName, correctCount, problems.length);
-            showFeedbackIfRequested(problems, userAnswers, scanner);
+            if (correctCount < problems.length) {
+                showFeedbackIfRequested(problems, userAnswers, scanner);
+            }
         }
     }
 
